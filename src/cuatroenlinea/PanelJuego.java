@@ -6,6 +6,14 @@
 
 package cuatroenlinea;
 
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.MouseInfo;
+import java.awt.Point;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author Arango Abello
@@ -15,10 +23,101 @@ public class PanelJuego extends javax.swing.JPanel {
     /**
      * Creates new form PanelJuego
      */
-    public PanelJuego() {
+    int ancho,alto;
+    int posClickX,posClickY;
+    boolean nuevoClick=false;
+    int[][] juego=new int[8][7];
+    Actualizador act;
+    Ventana ventana;
+    CuatroEnLinea cuatroEnLinea;
+    boolean turnoMaquina=false;
+    
+    public PanelJuego(Ventana ventana) {
+        this.ventana=ventana;
+        this.cuatroEnLinea=new CuatroEnLinea();
+        ancho=440;
+        alto=440;
         initComponents();
+        act=new Actualizador(this);
+        act.start();
     }
 
+    @Override
+    public void paintComponent(Graphics gr){
+        super.paintComponent(gr);
+        Graphics2D g = (Graphics2D) gr;
+        int espacio=ancho/8;
+        g.setColor(Color.BLACK);
+        for(int i=0;i<=9;i++){            
+          g.drawLine( espacio*i , espacio , espacio*i , ancho );
+          g.drawLine( espacio*i+1 , espacio , espacio*i+1 , ancho );
+        }
+        for(int i=1;i<=9;i++){            
+          g.drawLine( 0 , espacio*i , ancho , espacio*i );
+          g.drawLine( 0 , espacio*i+1 , ancho , espacio*i+1 );
+        }
+        
+        Point punto=MouseInfo.getPointerInfo().getLocation();
+        int posMouseX=punto.x;
+        int posMousey=punto.y;
+        int posPanelX=ventana.posX()+6;
+        int posPanelY=ventana.posY()+6;
+        //System.out.println("Mouse: ("+posMouseX+","+posMousey+") , Panel: ("+posPanelX+","+posPanelY+")");
+        
+        int posDentroX=0;
+        for (int i = 0; i < 8; i++) {
+            if (posMouseX>posPanelX&&posMouseX<posPanelX+440&&posMousey>posPanelY&&posMousey<posPanelY+440) {
+                posDentroX=posMouseX-posPanelX;
+            }
+            if (posDentroX>espacio*i&&posDentroX<espacio*(i+1)) {
+                    g.fillOval(espacio*i+2, 2, espacio-3, espacio-3);
+              }
+         }
+        for (int i = 0; i < juego.length; i++) {
+            for (int j = 0; j < juego[0].length; j++) {
+                if (juego[i][j]==1) {
+                    g.setColor(Color.BLUE);
+                    g.fillOval(espacio*i+2, espacio*(7-j)+2, espacio-3, espacio-3);
+                }
+                if (juego[i][j]==2) {
+                    g.setColor(Color.RED);
+                    g.fillOval(espacio*i+2, espacio*(7-j)+2, espacio-3, espacio-3);
+                }
+            }
+        }
+        
+        if (turnoMaquina) {
+            g.setColor(Color.RED);
+            int posX=this.cuatroEnLinea.aplicador(juego);
+            for (int j = 0; j < 7; j++) {
+                    if (juego[posX][j]==0) {
+                        g.fillOval(espacio*posX+2, espacio*(7-j)+2, espacio-3, espacio-3);
+                        juego[posX][j]=2;
+                        break;
+                        }
+            }
+            turnoMaquina=false;
+        }
+        
+        if (nuevoClick&&turnoMaquina==false) {
+            g.setColor(Color.BLUE);
+            
+            for (int i = 0; i < 8; i++) {
+                if (this.posClickX>=espacio*i&&this.posClickX<espacio*(i+1)) {
+                    for (int j = 0; j < 7; j++) {
+                    if (juego[i][j]==0) {
+                        g.fillOval(espacio*i+2, espacio*(7-j)+2, espacio-3, espacio-3);
+                        juego[i][j]=1;
+                        break;
+                        }
+                    }
+                    
+                }
+            }
+            this.nuevoClick=false;
+            this.turnoMaquina=true;
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -27,6 +126,17 @@ public class PanelJuego extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+
+        addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                formMouseMoved(evt);
+            }
+        });
+        addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                formMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -40,6 +150,43 @@ public class PanelJuego extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked
+        posClickX=(int)evt.getPoint().getX();
+        posClickY=(int)evt.getPoint().getY();
+        this.nuevoClick=true;
+        this.repaint();
+    }//GEN-LAST:event_formMouseClicked
+
+    private void formMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseMoved
+
+    }//GEN-LAST:event_formMouseMoved
+
+    public void nuevoJuego() {
+        for (int i = 0; i < juego.length; i++) {
+            for (int j = 0; j < juego[0].length; j++) {
+                juego[i][j]=0;
+            }
+        }
+    }
+
+    class Actualizador extends Thread{
+        PanelJuego panel;
+
+        public Actualizador(PanelJuego panel) {
+            this.panel = panel;
+        }
+        
+        @Override
+        public void run(){
+            while(true){
+                panel.repaint();
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ex) {
+                }
+            }
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables

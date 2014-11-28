@@ -6,17 +6,16 @@
 
 package cuatroenlinea;
 
+import java.util.Random;
+
 /**
  *
  * @author Arango Abello
  */
 public class CuatroEnLinea {
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        // TODO code application logic here
+    public int aplicador(int[][] juego){
+        Random rnd=new Random();
+        return rnd.nextInt(8);
     }
-    
 }
