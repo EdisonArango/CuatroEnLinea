@@ -78,23 +78,25 @@ public class PanelJuego extends javax.swing.JPanel {
             for (int j = 0; j < juego[0].length; j++) {
                 if (juego[i][j]==1) {
                     g.setColor(Color.BLUE);
-                    g.fillOval(espacio*i+2, espacio*(7-j)+2, espacio-3, espacio-3);
+                    g.fillOval(espacio*j+2, espacio*(i+1)+2, espacio-3, espacio-3);
                 }
                 if (juego[i][j]==2) {
                     g.setColor(Color.RED);
-                    g.fillOval(espacio*i+2, espacio*(7-j)+2, espacio-3, espacio-3);
+                    g.fillOval(espacio*j+2, espacio*(i+1)+2, espacio-3, espacio-3);
                 }
+                System.out.print(juego[i][j]+"  ");
             }
+            System.out.println();
         }
         
         if (turnoMaquina) {
             g.setColor(Color.RED);
             //Nivel 1
             int posX=this.cuatroEnLinea.aplicador();
-            for (int j = 0; j < 7; j++) {
-                    if (juego[posX][j]==0) {
-                        g.fillOval(espacio*posX+2, espacio*(7-j)+2, espacio-3, espacio-3);
-                        juego[posX][j]=2;
+            for (int i = juego.length-1; i >= 0; i--) {
+                    if (juego[i][posX]==0) {
+                        g.fillOval(espacio*posX+2, espacio*(i+1)+2, espacio-3, espacio-3);
+                        juego[i][posX]=2;
                         break;
                         }
             }
@@ -103,18 +105,19 @@ public class PanelJuego extends javax.swing.JPanel {
         
         if (nuevoClick&&turnoMaquina==false) {
             g.setColor(Color.BLUE);
+            int k=0;
+            for (int j = 0; j < juego[0].length; j++) {
+                if (this.posClickX>=espacio*j&&this.posClickX<espacio*(j+1)) {
+                    k=j;
+                }
+            }
             
-            for (int i = 0; i < 8; i++) {
-                if (this.posClickX>=espacio*i&&this.posClickX<espacio*(i+1)) {
-                    for (int j = 0; j < 7; j++) {
-                    if (juego[i][j]==0) {
-                        g.fillOval(espacio*i+2, espacio*(7-j)+2, espacio-3, espacio-3);
-                        juego[i][j]=1;
+            for (int i = juego.length-1; i >= 0; i--) {
+                    if (juego[i][k]==0) {
+                        g.fillOval(espacio*k+2, espacio*(i+1)+2, espacio-3, espacio-3);
+                        juego[i][k]=1;
                         break;
                         }
-                    }
-                    
-                }
             }
             this.nuevoClick=false;
             this.turnoMaquina=true;

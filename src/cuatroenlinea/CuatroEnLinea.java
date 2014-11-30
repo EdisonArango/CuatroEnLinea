@@ -14,7 +14,7 @@ import java.util.Random;
  */
 public class CuatroEnLinea {
 
-    private int[][] juego=new int[8][7];
+    private int[][] juego=new int[7][8];
     
     public int aplicador(){
         Random rnd=new Random();
