@@ -26,7 +26,7 @@ public class PanelJuego extends javax.swing.JPanel {
     int ancho,alto;
     int posClickX,posClickY;
     boolean nuevoClick=false;
-    int[][] juego=new int[8][7];
+    int[][] juego;
     Actualizador act;
     Ventana ventana;
     CuatroEnLinea cuatroEnLinea;
@@ -35,6 +35,7 @@ public class PanelJuego extends javax.swing.JPanel {
     public PanelJuego(Ventana ventana) {
         this.ventana=ventana;
         this.cuatroEnLinea=new CuatroEnLinea();
+        juego=cuatroEnLinea.getJuego();
         ancho=440;
         alto=440;
         initComponents();
@@ -88,7 +89,8 @@ public class PanelJuego extends javax.swing.JPanel {
         
         if (turnoMaquina) {
             g.setColor(Color.RED);
-            int posX=this.cuatroEnLinea.aplicador(juego);
+            //Nivel 1
+            int posX=this.cuatroEnLinea.aplicador();
             for (int j = 0; j < 7; j++) {
                     if (juego[posX][j]==0) {
                         g.fillOval(espacio*posX+2, espacio*(7-j)+2, espacio-3, espacio-3);
