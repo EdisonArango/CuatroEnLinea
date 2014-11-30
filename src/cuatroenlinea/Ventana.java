@@ -181,6 +181,13 @@ public class Ventana extends javax.swing.JFrame {
     public int posY(){
         return this.getLocation().y;
     }
+    
+    public void aumentarGanadosJugador(){
+        this.jTextField1.setText(""+(Integer.valueOf(this.jTextField1.getText())+1));
+    }
+    public void aumentarGanadosMaquina(){
+        this.jTextField2.setText(""+(Integer.valueOf(this.jTextField2.getText())+1));
+    }
     /**
      * @param args the command line arguments
      */

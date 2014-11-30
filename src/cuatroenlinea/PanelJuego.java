@@ -13,6 +13,7 @@ import java.awt.MouseInfo;
 import java.awt.Point;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -25,6 +26,7 @@ public class PanelJuego extends javax.swing.JPanel {
      */
     int ancho,alto;
     int posClickX,posClickY;
+    int espacio;
     boolean nuevoClick=false;
     int[][] juego;
     Actualizador act;
@@ -38,6 +40,7 @@ public class PanelJuego extends javax.swing.JPanel {
         juego=cuatroEnLinea.getJuego();
         ancho=440;
         alto=440;
+        espacio=ancho/8;
         initComponents();
         act=new Actualizador(this);
         act.start();
@@ -47,7 +50,6 @@ public class PanelJuego extends javax.swing.JPanel {
     public void paintComponent(Graphics gr){
         super.paintComponent(gr);
         Graphics2D g = (Graphics2D) gr;
-        int espacio=ancho/8;
         g.setColor(Color.BLACK);
         for(int i=0;i<=9;i++){            
           g.drawLine( espacio*i , espacio , espacio*i , ancho );
@@ -84,27 +86,15 @@ public class PanelJuego extends javax.swing.JPanel {
                     g.setColor(Color.RED);
                     g.fillOval(espacio*j+2, espacio*(i+1)+2, espacio-3, espacio-3);
                 }
-                System.out.print(juego[i][j]+"  ");
+                //System.out.print(juego[i][j]+"  ");
             }
-            System.out.println();
+            //System.out.println();
         }
-        
-        if (turnoMaquina) {
-            g.setColor(Color.RED);
-            //Nivel 1
-            int posX=this.cuatroEnLinea.aplicador();
-            for (int i = juego.length-1; i >= 0; i--) {
-                    if (juego[i][posX]==0) {
-                        g.fillOval(espacio*posX+2, espacio*(i+1)+2, espacio-3, espacio-3);
-                        juego[i][posX]=2;
-                        break;
-                        }
-            }
-            turnoMaquina=false;
-        }
+    }
+    
+    public void nuevoTurno(){
         
         if (nuevoClick&&turnoMaquina==false) {
-            g.setColor(Color.BLUE);
             int k=0;
             for (int j = 0; j < juego[0].length; j++) {
                 if (this.posClickX>=espacio*j&&this.posClickX<espacio*(j+1)) {
@@ -114,13 +104,37 @@ public class PanelJuego extends javax.swing.JPanel {
             
             for (int i = juego.length-1; i >= 0; i--) {
                     if (juego[i][k]==0) {
-                        g.fillOval(espacio*k+2, espacio*(i+1)+2, espacio-3, espacio-3);
                         juego[i][k]=1;
                         break;
                         }
             }
             this.nuevoClick=false;
             this.turnoMaquina=true;
+        }
+        int ganador = cuatroEnLinea.verificarGanador();
+        if (ganador==1) {
+            JOptionPane.showMessageDialog(this, "El jugador ha ganado", "Juego Terminado", JOptionPane.INFORMATION_MESSAGE);
+            ventana.aumentarGanadosJugador();
+            nuevoJuego();
+            return;
+        }
+        if (turnoMaquina) {
+            //Nivel 1
+            int posX=this.cuatroEnLinea.aplicador();
+            for (int i = juego.length-1; i >= 0; i--) {
+                    if (juego[i][posX]==0) {
+                        juego[i][posX]=2;
+                        break;
+                        }
+            }
+            turnoMaquina=false;
+        }
+        
+        ganador = cuatroEnLinea.verificarGanador();
+        if (ganador==2) {
+            JOptionPane.showMessageDialog(this, "La máquina ha ganado", "Juego Terminado", JOptionPane.INFORMATION_MESSAGE);
+            ventana.aumentarGanadosMaquina();
+            nuevoJuego();
         }
     }
     /**
@@ -138,8 +152,8 @@ public class PanelJuego extends javax.swing.JPanel {
             }
         });
         addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                formMouseClicked(evt);
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                formMouseReleased(evt);
             }
         });
 
@@ -155,16 +169,16 @@ public class PanelJuego extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked
-        posClickX=(int)evt.getPoint().getX();
-        posClickY=(int)evt.getPoint().getY();
-        this.nuevoClick=true;
-        this.repaint();
-    }//GEN-LAST:event_formMouseClicked
-
     private void formMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseMoved
 
     }//GEN-LAST:event_formMouseMoved
+
+    private void formMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseReleased
+        posClickX=(int)evt.getPoint().getX();
+        posClickY=(int)evt.getPoint().getY();
+        this.nuevoClick=true;
+        nuevoTurno();
+    }//GEN-LAST:event_formMouseReleased
 
     public void nuevoJuego() {
         for (int i = 0; i < juego.length; i++) {

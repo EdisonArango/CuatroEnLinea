@@ -21,6 +21,44 @@ public class CuatroEnLinea {
         return rnd.nextInt(8);
     }
 
+    public int verificarGanador(){
+        for (int i = 0; i < juego.length; i++) {
+            for (int j = 0; j < juego[0].length; j++) {
+                try{
+                if (juego[i][j]==juego[i][j+1]&&juego[i][j]==juego[i][j+2]&&juego[i][j]==juego[i][j+3]) {
+                    if (juego[i][j]!=0) {
+                        return juego[i][j];
+                    }
+                }
+                }catch(Exception e){
+                    //System.out.println("Nulo en: "+i+","+j);
+                }
+                try{
+                if (juego[i][j]==juego[i+1][j]&&juego[i][j]==juego[i+2][j]&&juego[i][j]==juego[i+3][j]){
+                    if (juego[i][j]!=0) {
+                        return juego[i][j];
+                    }
+                }
+                }catch(Exception e){}
+                try{
+                if (juego[i][j]==juego[i-1][j-1]&&juego[i][j]==juego[i-2][j-2]&&juego[i][j]==juego[i-3][j-3]){
+                    if (juego[i][j]!=0) {
+                        return juego[i][j];
+                    }
+                }
+                }catch(Exception e){}
+                try{
+                if (juego[i][j]==juego[i-1][j+1]&&juego[i][j]==juego[i-2][j+2]&&juego[i][j]==juego[i-3][j+3]){
+                    if (juego[i][j]!=0) {
+                        return juego[i][j];
+                    }
+                }
+                }catch(Exception e){}
+            }
+        }
+        return 0;
+    }
+    
     public int[][] getJuego() {
         return juego;
     }
