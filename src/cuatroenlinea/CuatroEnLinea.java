@@ -14,21 +14,8 @@ import java.util.Random;
  */
 public class CuatroEnLinea {
 
-    private int[][] juego=new int[7][8];
-    
-    public int aplicador(){
+    public int aplicador(int[][] juego){
         Random rnd=new Random();
         return rnd.nextInt(8);
     }
-    
-//    public int ganador(){
-//        for (int i = 0; i < 10; i++) {
-//            
-//        }
-//    }
-
-    public int[][] getJuego() {
-        return juego;
-    }
-
 }
