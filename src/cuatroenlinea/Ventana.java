@@ -6,6 +6,17 @@
 
 package cuatroenlinea;
 
+/*
+private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {                                         
+       String idioma[]= new Idiomas().listarIdimas();
+        String i = (String)JOptionPane.showInputDialog(rootPane, Idiomas.SeleccionIdioma, null, WIDTH, null, idioma,null )+"";
+        if (!i.equals("null")) {
+            Idiomas.idioma=i;
+            new Idiomas().insertarIdioma();
+        }
+        this.cargarIdioma();
+    }
+*/
 /**
  *
  * @author Arango Abello
